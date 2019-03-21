@@ -21,10 +21,10 @@ public class Move : MonoBehaviour
         transform.Translate(moveHorizontal, 0, 0);
 
         // Jump
-        if (Input.GetButton("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            rb.velocity += Vector2.up * jumpForce;
             isGrounded = false;
+            rb.velocity += Vector2.up * jumpForce;
 
         }
 
