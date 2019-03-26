@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Move : MonoBehaviour 
 {
@@ -10,8 +11,16 @@ public class Move : MonoBehaviour
 
     public float fallMultiplier;
     public float lowJumpMultiplier;
-    [SerializeField] bool isGrounded = true;
+    bool isGrounded = true;
     private float jumpTimer = -1;
+
+    [SerializeField] float groundCheckDistance = .5f;
+
+    private void Start()
+    {
+        LoadPlayerPos();
+
+    }
 
     private void Update()
     {
@@ -64,7 +73,7 @@ public class Move : MonoBehaviour
 
         }
 
-        var raycastHits = Physics2D.RaycastAll(transform.position, Vector2.down, .75f);
+        var raycastHits = Physics2D.RaycastAll(transform.position, Vector2.down, groundCheckDistance);
         bool foundGround = false;
 
         for (var count = 0; count < raycastHits.Length; count++)
@@ -92,6 +101,41 @@ public class Move : MonoBehaviour
     void OnCollisionEnter2D(Collision2D collision)
     {
         isGrounded |= collision.gameObject.tag == "Ground";
+
+    }
+
+    private void OnDrawGizmos()
+    {
+
+        if(isGrounded)
+        {
+            Gizmos.color = Color.blue;
+
+        }
+        else
+        {
+            Gizmos.color = Color.red;
+
+        }
+      
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * groundCheckDistance);
+
+    }
+
+    public void LoadPlayerPos()
+    {
+        var sceneIndex = SceneManager.GetActiveScene().buildIndex;
+
+        if (!PlayerPrefs.HasKey(sceneIndex + "PlayerX"))
+        {
+            return;
+
+        }
+        
+        //Loading
+        transform.position = new Vector2(PlayerPrefs.GetFloat(sceneIndex + "PlayerX"), PlayerPrefs.GetFloat(sceneIndex + "PlayerY"));
+
+        Debug.Log("Load");
 
     }
 }
