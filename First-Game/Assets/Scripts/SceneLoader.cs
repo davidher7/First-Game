@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour {
 
-    public GameObject player;
     int currentSceneIndex;
 
     private void Awake()
@@ -13,14 +12,15 @@ public class SceneLoader : MonoBehaviour {
         currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
 
     }
-    private void nextScene()
+    private void NextScene()
     {
         SceneManager.LoadScene(currentSceneIndex + 1);
 
     }
 
-    private void back()
+    private void Back()
     {
+        // Deletes current position (Player) before calling LoadPlayerPos
         PlayerPrefs.DeleteKey(currentSceneIndex + "PlayerX");
         PlayerPrefs.DeleteKey(currentSceneIndex + "PlayerY");
 
@@ -28,7 +28,7 @@ public class SceneLoader : MonoBehaviour {
         
     }
 
-    private void startMenu()
+    private void StartMenu()
     {
         SceneManager.LoadScene(0);
 
@@ -42,18 +42,19 @@ public class SceneLoader : MonoBehaviour {
 
     }
 
+    // Checks which door the player collides with and calls the appropriate function
     private void OnTriggerEnter2D(Collider2D collision)
     {  
         if (collision.gameObject.tag == "Player" && transform.position.x > 0)
         {
             SetPlayerPos();
-            nextScene();
+            NextScene();
 
         }
 
         if (collision.gameObject.tag == "Player" && transform.position.x < 0)
         {
-            back();
+            Back();
             
 
         }
@@ -61,13 +62,11 @@ public class SceneLoader : MonoBehaviour {
 
     void SetPlayerPos()
     {
-        //Saving
+        // Setting PlayerPrefs' Keys and Float
         PlayerPrefs.SetFloat(currentSceneIndex + "PlayerX", 2.5f);
         PlayerPrefs.SetFloat(currentSceneIndex + "PlayerY", -1.685f);
 
         Debug.Log("Save");
         
     }
-
-    
 }

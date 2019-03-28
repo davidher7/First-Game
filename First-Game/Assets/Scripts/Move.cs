@@ -6,29 +6,18 @@ using UnityEngine.SceneManagement;
 public class Move : MonoBehaviour 
 {
     public Rigidbody2D rb;
-    public float playerSpeed;
-    public float jumpForce;
+    private float playerSpeed = 7;
+    private float jumpForce = 8;
 
-    public float fallMultiplier;
-    public float lowJumpMultiplier;
-    bool isGrounded = true;
-    private float jumpTimer = -1;
+    private float fallMultiplier = 3.5f;
+    private float lowJumpMultiplier = 2.25f;
+    bool isGrounded;
 
-    [SerializeField] float groundCheckDistance = .5f;
+    float groundCheckDistance = .5f;
 
     private void Start()
     {
         LoadPlayerPos();
-
-    }
-
-    private void Update()
-    {
-        if(jumpTimer > 0)
-        {
-            jumpTimer -= Time.deltaTime;
-
-        }
 
     }
 
@@ -41,10 +30,9 @@ public class Move : MonoBehaviour
         transform.Translate(moveHorizontal, 0, 0);
 
         // Jump
-        if (Input.GetButton("Jump") && isGrounded &&  jumpTimer < 0)
+        if (Input.GetButton("Jump") && isGrounded)
         {
             isGrounded = false;
-            jumpTimer = .25f;
             rb.velocity += Vector2.up * jumpForce;
 
         }
@@ -61,11 +49,11 @@ public class Move : MonoBehaviour
 
         }
 
-        groundCheck();
+        GroundCheck();
         
     }
 
-    void groundCheck()
+    void GroundCheck()
     {
         if(isGrounded == false)
         {
@@ -78,7 +66,6 @@ public class Move : MonoBehaviour
 
         for (var count = 0; count < raycastHits.Length; count++)
         {
-
             if (raycastHits[count].transform.tag == "Ground")
             {
                 foundGround = true;
@@ -86,7 +73,6 @@ public class Move : MonoBehaviour
                 break;
 
             }
-
         }
 
         if(foundGround == false)
@@ -94,20 +80,36 @@ public class Move : MonoBehaviour
             isGrounded = false;
 
         }
-
     }
 
-    // Jump Limiter
+    // Resets isGrounded to true 
     void OnCollisionEnter2D(Collision2D collision)
     {
         isGrounded |= collision.gameObject.tag == "Ground";
 
     }
 
+    public void LoadPlayerPos()
+    {
+        int sceneIndex = SceneManager.GetActiveScene().buildIndex;
+
+        if (!PlayerPrefs.HasKey(sceneIndex + "PlayerX"))
+        {
+            return;
+
+        }
+        
+        // Loads Player's position
+        transform.position = new Vector2(PlayerPrefs.GetFloat(sceneIndex + "PlayerX"), PlayerPrefs.GetFloat(sceneIndex + "PlayerY"));
+
+        Debug.Log("Load");
+
+    }
+
+    // Draws groundCheckDistance 
     private void OnDrawGizmos()
     {
-
-        if(isGrounded)
+        if (isGrounded)
         {
             Gizmos.color = Color.blue;
 
@@ -117,25 +119,8 @@ public class Move : MonoBehaviour
             Gizmos.color = Color.red;
 
         }
-      
+
         Gizmos.DrawLine(transform.position, transform.position + Vector3.down * groundCheckDistance);
-
-    }
-
-    public void LoadPlayerPos()
-    {
-        var sceneIndex = SceneManager.GetActiveScene().buildIndex;
-
-        if (!PlayerPrefs.HasKey(sceneIndex + "PlayerX"))
-        {
-            return;
-
-        }
-        
-        //Loading
-        transform.position = new Vector2(PlayerPrefs.GetFloat(sceneIndex + "PlayerX"), PlayerPrefs.GetFloat(sceneIndex + "PlayerY"));
-
-        Debug.Log("Load");
 
     }
 }
