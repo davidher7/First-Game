@@ -50,6 +50,15 @@ public class Move : MonoBehaviour
         }
 
         GroundCheck();
+
+        // Quit Game
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+
+            Debug.Log("QUIT!");
+
+        }
         
     }
 

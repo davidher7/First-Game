@@ -7,18 +7,21 @@ public class SceneLoader : MonoBehaviour {
 
     int currentSceneIndex;
 
-    private void Awake()
+    public Animator animator;
+
+    public void Awake()
     {
         currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
 
     }
-    private void NextScene()
+
+    public void NextScene()
     {
         SceneManager.LoadScene(currentSceneIndex + 1);
 
     }
 
-    private void Back()
+    public void Back()
     {
         // Deletes current position (Player) before calling LoadPlayerPos
         PlayerPrefs.DeleteKey(currentSceneIndex + "PlayerX");
@@ -28,13 +31,13 @@ public class SceneLoader : MonoBehaviour {
         
     }
 
-    private void StartMenu()
+    public void StartMenu()
     {
         SceneManager.LoadScene(0);
 
     }
 
-    private void QuitGame()
+    public void QuitGame()
     {
         Application.Quit();
 
@@ -47,6 +50,7 @@ public class SceneLoader : MonoBehaviour {
     {  
         if (collision.gameObject.tag == "Player" && transform.position.x > 0)
         {
+            FadeOut();
             SetPlayerPos();
             NextScene();
 
@@ -54,9 +58,9 @@ public class SceneLoader : MonoBehaviour {
 
         if (collision.gameObject.tag == "Player" && transform.position.x < 0)
         {
+            FadeOut();
             Back();
             
-
         }
     }
 
@@ -68,5 +72,12 @@ public class SceneLoader : MonoBehaviour {
 
         Debug.Log("Save");
         
+    }
+
+    public void FadeOut()
+    {
+        Debug.Log("FadeOut");
+        animator.SetTrigger("FadeOut");
+
     }
 }
