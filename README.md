@@ -3,6 +3,6 @@ Internship Game Project
 
 ## Credits 
 
-David Hernandez
+David Hernandez  
 Austin Ellerby
 
